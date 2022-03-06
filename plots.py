@@ -57,7 +57,7 @@ def scores_depths_plot(file_names: list[str], legend_names: list[str]) -> None:
   for s in scores:
     plt.plot(s)
   plt.xlabel('Depth')
-  plt.ylabel('Evaluation Score')
+  plt.ylabel('Evaluation Score [centipawns]')
   plt.legend(legend_names)
   plt.tight_layout()
   plt.grid()
@@ -66,7 +66,7 @@ def scores_depths_plot(file_names: list[str], legend_names: list[str]) -> None:
   plt.figure(figsize=(4,3))
   for d in depths:
     plt.plot(d)
-  plt.xlabel('Time')
+  plt.xlabel('Time [seconds]')
   plt.ylabel('Reached Depth')
   plt.legend(legend_names)
   plt.tight_layout()
@@ -74,8 +74,33 @@ def scores_depths_plot(file_names: list[str], legend_names: list[str]) -> None:
   plt.savefig(os.path.join('plots', f'depths.pgf'))
 
 
+def tactical_indicators(file_names: list[str]) -> None:
+
+  if not os.path.exists('tables'):
+    os.mkdir('tables')
+
+  with open(os.path.join('tables', 'tactical_analysis.csv'), 'w') as f:
+
+    f.write('name,reached_depth,stability\n')
+
+    for name in file_names:
+
+      csv_file = pd.read_csv(os.path.join('output', f'{name}_history.csv'))
+
+      best_move = csv_file[csv_file['multipv'] == 1]
+
+      group_by_depth = best_move.groupby(['depth'])
+
+      reached_depth = max(group_by_depth.indices)
+      
+      stability = group_by_depth['score'].max().diff().abs().mean()
+
+      f.write(f'{name},{reached_depth},{stability}\n')
+
+
 if __name__ == '__main__':
   scores_depths_plot(
     ['standard', 'ccrl1', 'ccrl2', 'ccrl3'],
     ['Standard', 'FRC$_1$', 'FRC$_2$', 'FRC$_3$']
   )
+  tactical_indicators(['standard', 'ccrl1', 'ccrl2', 'ccrl3'])
