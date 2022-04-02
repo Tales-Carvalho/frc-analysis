@@ -21,9 +21,9 @@ pip install -r requirements.txt
 python main.py
 ```
 
-### Generate plots
+### Generate plots and tables
 
 
 ```sh
-python plots.py
+python plots_tables.py
 ```
