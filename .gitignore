@@ -1,5 +1,12 @@
+__pycache__
 env
 logs
+logs_move
+logs_move_white
+logs_move_black
 output
+output_move
+output_move_white
+output_move_black
 plots
 tables
